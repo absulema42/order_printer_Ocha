@@ -1,0 +1,86 @@
+# Builds the Windows installer and the Android app on GitHub's computers.
+# Push this project to a GitHub repository (or press "Run workflow" on the
+# Actions tab); when it finishes, download the files from the run's
+# "Artifacts" section.
+name: Build apps
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Prepare project
+        run: |
+          flutter create --org com.orderprinter --project-name order_printer --platforms=windows .
+          dart run tool/apply_branding.dart
+          flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build Windows app
+        run: flutter build windows --release
+
+      - name: Add Visual C++ runtime
+        shell: pwsh
+        run: |
+          $dest = "build/windows/x64/runner/Release"
+          foreach ($f in "msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll") {
+            Copy-Item "$env:WINDIR\System32\$f" $dest
+          }
+
+      - name: Make installer and portable zip
+        shell: pwsh
+        run: |
+          choco upgrade innosetup -y --no-progress
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" windows_installer.iss
+          Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath dist/OChaThai-Windows-Portable.zip -Force
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OChaThai-Windows
+          path: dist/*
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Prepare project
+        run: |
+          flutter create --org com.orderprinter --project-name order_printer --platforms=android .
+          dart run tool/apply_branding.dart
+          dart run tool/use_signing_key.dart
+          flutter pub get
+
+      - name: Build Android app
+        run: flutter build apk --release
+
+      - name: Rename
+        run: cp build/app/outputs/flutter-apk/app-release.apk OChaThai.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OChaThai-Android
+          path: OChaThai.apk

@@ -156,13 +156,13 @@ class _SalesScreenState extends State<SalesScreen> {
       await items.writeAsString(itemsCsv(r));
 
       if (mobile) {
-        await Share.shareXFiles(
-          [
+        await SharePlus.instance.share(ShareParams(
+          files: [
             for (final f in [summary, orders, items])
               XFile(f.path, mimeType: 'text/csv'),
           ],
           subject: '${app.settings.restaurantName} sales ${_period.dates}',
-        );
+        ));
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           duration: const Duration(seconds: 10),

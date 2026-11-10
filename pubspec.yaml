@@ -11,8 +11,10 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.2.0
   path_provider: ^2.1.4
-  share_plus: ^10.1.4
-  file_picker: ^8.1.2
+  share_plus: ^12.0.2
+  # 10.3.10: compiles against Flutter's Android SDK level (8.x failed with
+  # "requires compileSdk 36"); same API as 8.x.
+  file_picker: 10.3.10
   archive: ^3.6.1
   xml: ^6.5.0
 

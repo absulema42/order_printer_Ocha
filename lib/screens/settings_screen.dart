@@ -196,7 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     for (final e in AppSettings.itemSizes.entries)
                       DropdownMenuItem(value: e.key, child: Text(e.value)),
                   ],
-                  onChanged: (v) => setState(() => _itemSize = v ?? 'tall'),
+                  onChanged: (v) => setState(() => _itemSize = v ?? 'large'),
                 ),
               ]),
               const SizedBox(height: 24),

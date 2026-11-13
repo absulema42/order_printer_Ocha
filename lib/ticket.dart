@@ -151,8 +151,8 @@ Uint8List buildReceipt(Order order, AppSettings settings,
   }
   p.divider();
 
-  // Products. 'tall' and 'large' print bigger, bold, well-spaced rows so
-  // they can be read from further away.
+  // Products. 'wide', 'tall' and 'large' print bigger, bold, well-spaced
+  // rows so they can be read from further away.
   final size = settings.itemSize;
   const rowGap = 14; // dots of extra space between rows (~1.75 mm)
   void note(OrderLine l) {
@@ -164,29 +164,30 @@ Uint8List buildReceipt(Order order, AppSettings settings,
     }
   }
 
-  if (size == 'large') {
+  if (size == 'large' || size == 'wide') {
     // Double width: 24 columns. Name on one line, "qty x price" and the
-    // line total underneath.
+    // line total underneath. 'wide' keeps normal height (short, broad
+    // letters); 'large' is double height as well.
     const lw = w ~/ 2;
-    p.size(width: 2, height: 2);
+    final h = size == 'large' ? 2 : 1;
+    p.size(width: 2, height: h);
     p.bold(true);
     p.leftRight('PRODUCT', 'TOTAL', width: lw);
     p.size();
     p.divider();
     for (final l in order.lines) {
-      p.size(width: 2, height: 2);
+      p.size(width: 2, height: h);
       p.bold(true);
       for (final s in EscPos.wrap(l.item.name, lw)) {
         p.line(s);
       }
-      p.bold(false);
       p.leftRight('${l.qty} x ${formatPrice(l.unitPence)}',
           formatPrice(l.totalPence),
           width: lw);
       note(l);
       p.gap(rowGap);
     }
-    p.size(width: 2, height: 2);
+    p.size(width: 2, height: h);
     p.bold(true);
     p.leftRight('Total Qty', '${order.itemCount}', width: lw);
   } else {

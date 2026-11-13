@@ -46,6 +46,17 @@ class AppState extends ChangeNotifier {
       }
       await _prefs.setString(_kBrand, 'ocha2');
     }
+
+    // One-time: receipts that used the old default 'tall' (or 'wide')
+    // product lines switch to the new default 'large': same height as
+    // 'tall', double width, bold.
+    if (_prefs.getBool('itemSizeLarge') != true) {
+      if (settings.itemSize == 'tall' || settings.itemSize == 'wide') {
+        settings.itemSize = 'large';
+        await _prefs.setString(_kSettings, jsonEncode(settings.toJson()));
+      }
+      await _prefs.setBool('itemSizeLarge', true);
+    }
   }
 
   List<String> get categories {

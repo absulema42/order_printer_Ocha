@@ -121,8 +121,9 @@ class AppSettings {
   /// 'kitchen' (large kitchen ticket) or 'both'.
   String slipStyle;
 
-  /// Size of the product lines on the receipt: 'normal', 'tall' (double
-  /// height, same columns) or 'large' (double height and width).
+  /// Size of the product lines on the receipt: 'normal', 'wide' (double
+  /// width, normal height), 'tall' (double height, same columns) or 'large'
+  /// (double height and width).
   String itemSize;
 
   AppSettings({
@@ -139,11 +140,12 @@ class AppSettings {
     this.staffName = 'Supervisor',
     this.deviceName = 'Till1',
     this.slipStyle = 'receipt',
-    this.itemSize = 'tall',
+    this.itemSize = 'large',
   });
 
   static const itemSizes = {
     'normal': 'Normal',
+    'wide': 'Wide',
     'tall': 'Tall',
     'large': 'Extra large',
   };
@@ -190,7 +192,7 @@ class AppSettings {
             : 'receipt',
         itemSize: itemSizes.containsKey(j['itemSize'])
             ? j['itemSize'] as String
-            : 'tall',
+            : 'large',
       );
 }
 

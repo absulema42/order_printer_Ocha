@@ -101,6 +101,10 @@ void main() {
         buildReceipt(order, AppSettings(itemSize: size)));
     // Tall: double height (GS ! 0x01) and extra row spacing (ESC J).
     expect(receipt('tall'), contains('\x1D\x21\x01'));
+    // Wide (the default): double width, normal height (GS ! 0x10).
+    expect(receipt('wide'), contains('\x1D\x21\x10'));
+    expect(receipt('wide'), contains('2 x \x9C10.95'));
+    expect(AppSettings().itemSize, 'large');
     expect(receipt('tall'), contains('\x1B\x4A'));
     expect(receipt('normal'), isNot(contains('\x1B\x4A')));
     // Extra large: name on its own line, then qty x price and total.

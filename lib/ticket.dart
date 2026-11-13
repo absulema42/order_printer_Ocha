@@ -97,7 +97,7 @@ Uint8List buildReceipt(Order order, AppSettings settings,
     {bool reprint = false}) {
   final p = EscPos()..init();
   const w = EscPos.lineWidth; // 48
-  const priceW = 9, qtyW = 5, totalW = 9;
+  const priceW = 12, qtyW = 5, totalW = 12;
   const nameW = w - priceW - qtyW - totalW; // 25
   final t = order.time;
 

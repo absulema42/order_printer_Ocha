@@ -20,8 +20,12 @@ jobs:
           channel: stable
           cache: true
 
+      # The platform folders are generated fresh on every build, so they
+      # always match the Flutter version used here.
       - name: Prepare project
+        shell: pwsh
         run: |
+          if (Test-Path windows) { Remove-Item -Recurse -Force windows }
           flutter create --org com.orderprinter --project-name order_printer --platforms=windows .
           dart run tool/apply_branding.dart
           flutter pub get
@@ -67,8 +71,11 @@ jobs:
           channel: stable
           cache: true
 
+      # The platform folders are generated fresh on every build, so they
+      # always match the Flutter version used here.
       - name: Prepare project
         run: |
+          rm -rf android
           flutter create --org com.orderprinter --project-name order_printer --platforms=android .
           dart run tool/apply_branding.dart
           dart run tool/use_signing_key.dart
